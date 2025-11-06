@@ -1,0 +1,14 @@
+{
+  "name": "receiptextractor-shared",
+  "version": "1.0.0",
+  "description": "Shared types for ReceiptExtractor",
+  "main": "types.ts",
+  "types": "types.ts",
+  "keywords": [
+    "typescript",
+    "types"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
