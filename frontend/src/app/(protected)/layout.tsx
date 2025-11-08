@@ -30,8 +30,8 @@ export default function ProtectedLayout({
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Upload", href: "/upload", icon: Upload },
-    { name: "Invoices", href: "/invoices", icon: FileText },
+    { name: "Contracts", href: "/contracts", icon: FileText },
+    { name: "Invoices", href: "/invoices", icon: Upload },
     { name: "Vendors", href: "/vendors", icon: Users },
     { name: "Settings", href: "/settings", icon: Settings },
   ];

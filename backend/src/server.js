@@ -27,6 +27,7 @@ const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/upload');
 const invoiceRoutes = require('./routes/invoices');
 const vendorRoutes = require('./routes/vendors');
+const contractRoutes = require('./routes/contracts');
 const billingRoutes = require('./routes/billing');
 const webhookRoutes = require('./routes/webhooks');
 
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/vendors', vendorRoutes);
+app.use('/api/contracts', contractRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/webhooks', webhookRoutes);
 

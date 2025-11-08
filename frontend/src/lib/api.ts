@@ -135,6 +135,22 @@ export const vendorAPI = {
     }),
 };
 
+// Contract endpoints
+export const contractAPI = {
+  getContracts: (token: string, organizationId: string | number) =>
+    fetchAPI('/api/contracts', { token, organizationId }),
+
+  getContract: (id: number, token: string, organizationId: string | number) =>
+    fetchAPI(`/api/contracts/${id}`, { token, organizationId }),
+
+  deleteContract: (id: number, token: string, organizationId: string | number) =>
+    fetchAPI(`/api/contracts/${id}`, {
+      method: 'DELETE',
+      token,
+      organizationId,
+    }),
+};
+
 // Billing endpoints
 export const billingAPI = {
   getSubscription: (token: string, organizationId: string | number) =>
