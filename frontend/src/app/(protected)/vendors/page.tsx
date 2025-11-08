@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useOrganization } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,21 +11,24 @@ import { formatCurrency, formatPercentage } from "@/lib/utils";
 import { Building, FileText, AlertCircle, TrendingUp, Upload } from "lucide-react";
 
 export default function VendorsPage() {
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const [vendors, setVendors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadVendors();
-  }, [organization]);
+    if (session?.accessToken && session?.user?.organizationId) {
+      loadVendors();
+    }
+  }, [session]);
 
   async function loadVendors() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
-      const data = await vendorAPI.getVendors(token, organization.id);
+      const data = await vendorAPI.getVendors(token, organizationId);
       setVendors(data.vendors || []);
     } catch (error) {
       console.error("Failed to load vendors:", error);

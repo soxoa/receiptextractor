@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useOrganization } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,23 +13,26 @@ import Link from "next/link";
 export default function InvoiceDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const [invoice, setInvoice] = useState<any>(null);
   const [lineItems, setLineItems] = useState<any[]>([]);
   const [discrepancies, setDiscrepancies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadInvoiceDetails();
-  }, [params?.id, organization]);
+    if (session?.accessToken && session?.user?.organizationId && params?.id) {
+      loadInvoiceDetails();
+    }
+  }, [params?.id, session]);
 
   async function loadInvoiceDetails() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id || !params?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId || !params?.id) return;
 
-      const data = await invoiceAPI.getInvoice(Number(params.id), token, organization.id);
+      const data = await invoiceAPI.getInvoice(Number(params.id), token, organizationId);
       setInvoice(data.invoice);
       setLineItems(data.lineItems || []);
       setDiscrepancies(data.discrepancies || []);
@@ -42,10 +45,12 @@ export default function InvoiceDetailPage() {
 
   async function handleDiscrepancyAction(discrepancyId: number, status: string, notes?: string) {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
-      await invoiceAPI.updateDiscrepancy(discrepancyId, { status, notes }, token, organization.id);
+      await invoiceAPI.updateDiscrepancy(discrepancyId, { status, notes }, token, organizationId);
       await loadInvoiceDetails(); // Reload data
     } catch (error) {
       console.error("Failed to update discrepancy:", error);

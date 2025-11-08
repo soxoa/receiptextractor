@@ -2,18 +2,46 @@ require('dotenv').config();
 const { query } = require('./connection');
 
 const migrations = `
--- Organizations (cached from Clerk)
+-- Users
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255),
+  name VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- Organizations
 CREATE TABLE IF NOT EXISTS organizations (
-  id VARCHAR(255) PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  owner_user_id VARCHAR(255) NOT NULL,
+  owner_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_organizations_owner ON organizations(owner_user_id);
+
+-- Organization Members (for multi-user support)
+CREATE TABLE IF NOT EXISTS organization_members (
+  id SERIAL PRIMARY KEY,
+  organization_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  role VARCHAR(50) DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member', 'viewer')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(organization_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_org_members_org ON organization_members(organization_id);
+CREATE INDEX IF NOT EXISTS idx_org_members_user ON organization_members(user_id);
 
 -- Subscriptions (Stripe)
 CREATE TABLE IF NOT EXISTS subscriptions (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   stripe_customer_id VARCHAR(255) UNIQUE,
   stripe_subscription_id VARCHAR(255) UNIQUE,
   plan_tier VARCHAR(50) NOT NULL DEFAULT 'free' CHECK (plan_tier IN ('free', 'starter', 'pro', 'enterprise')),
@@ -31,7 +59,7 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_customer ON subscriptions(st
 -- Usage Tracking
 CREATE TABLE IF NOT EXISTS usage_tracking (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   month DATE NOT NULL,
   invoice_count INTEGER DEFAULT 0,
   last_reset_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -43,7 +71,7 @@ CREATE INDEX IF NOT EXISTS idx_usage_org_month ON usage_tracking(organization_id
 -- Vendors
 CREATE TABLE IF NOT EXISTS vendors (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   external_id VARCHAR(255),
   address TEXT,
@@ -59,7 +87,7 @@ CREATE INDEX IF NOT EXISTS idx_vendors_name ON vendors(organization_id, name);
 -- Price Agreements
 CREATE TABLE IF NOT EXISTS price_agreements (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   vendor_id INTEGER REFERENCES vendors(id) ON DELETE CASCADE,
   effective_date DATE,
   expiration_date DATE,
@@ -90,7 +118,7 @@ CREATE INDEX IF NOT EXISTS idx_price_agreement_items_code ON price_agreement_ite
 -- Invoices
 CREATE TABLE IF NOT EXISTS invoices (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   vendor_id INTEGER REFERENCES vendors(id),
   invoice_number VARCHAR(255),
   invoice_date DATE,
@@ -115,7 +143,7 @@ CREATE INDEX IF NOT EXISTS idx_invoices_date ON invoices(invoice_date DESC);
 CREATE TABLE IF NOT EXISTS invoice_line_items (
   id SERIAL PRIMARY KEY,
   invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   line_number INTEGER,
   item_code VARCHAR(255),
   item_description TEXT,
@@ -133,7 +161,7 @@ CREATE TABLE IF NOT EXISTS discrepancies (
   id SERIAL PRIMARY KEY,
   invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
   invoice_line_item_id INTEGER REFERENCES invoice_line_items(id) ON DELETE CASCADE,
-  organization_id VARCHAR(255) NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   discrepancy_type VARCHAR(50) NOT NULL CHECK (discrepancy_type IN ('price_mismatch', 'item_not_in_contract', 'quantity_issue', 'calculation_error')),
   expected_value DECIMAL(10, 2),
   actual_value DECIMAL(10, 2),
@@ -153,7 +181,7 @@ CREATE INDEX IF NOT EXISTS idx_discrepancies_status ON discrepancies(status);
 -- Emails (audit log)
 CREATE TABLE IF NOT EXISTS emails (
   id SERIAL PRIMARY KEY,
-  organization_id VARCHAR(255) REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
   recipient_email VARCHAR(255) NOT NULL,
   subject VARCHAR(500),
   template_name VARCHAR(100),
@@ -170,8 +198,8 @@ CREATE INDEX IF NOT EXISTS idx_emails_sent_at ON emails(sent_at DESC);
 -- User Onboarding
 CREATE TABLE IF NOT EXISTS user_onboarding (
   id SERIAL PRIMARY KEY,
-  user_id VARCHAR(255) UNIQUE NOT NULL,
-  organization_id VARCHAR(255) REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  organization_id INTEGER REFERENCES organizations(id) ON DELETE CASCADE,
   completed BOOLEAN DEFAULT false,
   step_current INTEGER DEFAULT 1,
   step_completed INTEGER DEFAULT 0,

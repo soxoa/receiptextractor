@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth, useOrganization } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,8 +12,7 @@ import { Upload, FileText, CheckCircle, AlertCircle, Clock } from "lucide-react"
 import { formatCurrency } from "@/lib/utils";
 
 export default function UploadPage() {
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const router = useRouter();
   const [documentType, setDocumentType] = useState<'price_agreement' | 'invoice'>('invoice');
   const [uploading, setUploading] = useState(false);
@@ -29,12 +28,14 @@ export default function UploadPage() {
     setResult(null);
 
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) {
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) {
         throw new Error("Authentication required");
       }
 
-      const response = await uploadAPI.uploadDocument(file, documentType, token, organization.id);
+      const response = await uploadAPI.uploadDocument(file, documentType, token, organizationId);
       setResult(response);
 
       // Redirect to appropriate page after success

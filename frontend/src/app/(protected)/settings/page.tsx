@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useOrganization, UserProfile } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,7 @@ import { formatCurrency } from "@/lib/utils";
 import { CreditCard, Users, Bell, User, CheckCircle } from "lucide-react";
 
 export default function SettingsPage() {
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'profile');
   const [subscription, setSubscription] = useState<any>(null);
@@ -20,19 +19,21 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (activeTab === 'billing') {
+    if (activeTab === 'billing' && session?.accessToken && session?.user?.organizationId) {
       loadBillingData();
     }
-  }, [organization, activeTab]);
+  }, [session, activeTab]);
 
   async function loadBillingData() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
       const [subData, usageData] = await Promise.all([
-        billingAPI.getSubscription(token, organization.id),
-        billingAPI.getUsage(token, organization.id),
+        billingAPI.getSubscription(token, organizationId),
+        billingAPI.getUsage(token, organizationId),
       ]);
 
       setSubscription(subData);
@@ -46,10 +47,12 @@ export default function SettingsPage() {
 
   async function handleUpgrade(planTier: string) {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
-      const { url } = await billingAPI.createCheckoutSession(planTier, token, organization.id);
+      const { url } = await billingAPI.createCheckoutSession(planTier, token, organizationId);
       window.location.href = url;
     } catch (error) {
       console.error("Failed to create checkout:", error);
@@ -59,10 +62,12 @@ export default function SettingsPage() {
 
   async function handleManageBilling() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
-      const { url } = await billingAPI.createPortalSession(token, organization.id);
+      const { url } = await billingAPI.createPortalSession(token, organizationId);
       window.location.href = url;
     } catch (error) {
       console.error("Failed to open billing portal:", error);
@@ -116,8 +121,20 @@ export default function SettingsPage() {
               <CardTitle>Profile Settings</CardTitle>
               <CardDescription>Manage your personal information and account settings</CardDescription>
             </CardHeader>
-            <CardContent>
-              <UserProfile />
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Email</label>
+                <p className="mt-1 text-sm text-gray-600">{session?.user?.email}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Name</label>
+                <p className="mt-1 text-sm text-gray-600">{session?.user?.name || 'Not set'}</p>
+              </div>
+              <div className="pt-4 border-t">
+                <p className="text-sm text-gray-500">
+                  To update your profile, please contact support.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

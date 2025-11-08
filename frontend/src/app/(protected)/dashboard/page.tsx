@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useOrganization } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -11,24 +11,27 @@ import { TrendingUp, AlertCircle, CheckCircle, Clock, Upload } from "lucide-reac
 import Link from "next/link";
 
 export default function DashboardPage() {
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const [stats, setStats] = useState<any>(null);
   const [usage, setUsage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [organization]);
+    if (session?.accessToken && session?.user?.organizationId) {
+      loadDashboardData();
+    }
+  }, [session]);
 
   async function loadDashboardData() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
       const [statsData, usageData] = await Promise.all([
-        invoiceAPI.getDashboardStats(token, organization.id),
-        billingAPI.getUsage(token, organization.id),
+        invoiceAPI.getDashboardStats(token, organizationId),
+        billingAPI.getUsage(token, organizationId),
       ]);
 
       setStats(statsData);

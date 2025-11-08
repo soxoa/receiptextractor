@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useOrganization } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +11,7 @@ import { formatCurrency, formatDate, getStatusColor } from "@/lib/utils";
 import { FileText, AlertCircle, CheckCircle, Clock, ChevronRight } from "lucide-react";
 
 export default function InvoicesPage() {
-  const { getToken } = useAuth();
-  const { organization } = useOrganization();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const statusFilter = searchParams?.get('status');
   
@@ -20,18 +19,22 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadInvoices();
-  }, [organization, statusFilter]);
+    if (session?.accessToken && session?.user?.organizationId) {
+      loadInvoices();
+    }
+  }, [session, statusFilter]);
 
   async function loadInvoices() {
     try {
-      const token = await getToken();
-      if (!token || !organization?.id) return;
+      const token = session?.accessToken as string;
+      const organizationId = session?.user?.organizationId as string;
+      
+      if (!token || !organizationId) return;
 
       const params: any = { limit: 50 };
       if (statusFilter) params.status = statusFilter;
 
-      const data = await invoiceAPI.getInvoices(token, organization.id, params);
+      const data = await invoiceAPI.getInvoices(token, organizationId, params);
       setInvoices(data.invoices || []);
     } catch (error) {
       console.error("Failed to load invoices:", error);

@@ -1,7 +1,10 @@
-const { clerkClient } = require('@clerk/clerk-sdk-node');
+const jwt = require('jsonwebtoken');
+const { query } = require('../db/connection');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 /**
- * Middleware to verify Clerk authentication token
+ * Middleware to verify JWT authentication token
  * Extracts userId and organizationId from the token
  * Attaches them to req.auth for downstream use
  */
@@ -19,63 +22,74 @@ async function requireAuth(req, res, next) {
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-    // Verify the token with Clerk
-    const session = await clerkClient.sessions.verifySession(
-      req.headers['clerk-session-id'] || '',
-      token
-    );
+    // Verify the JWT token
+    const decoded = jwt.verify(token, JWT_SECRET);
 
-    if (!session || !session.userId) {
+    if (!decoded.userId) {
       return res.status(401).json({ 
         error: 'Unauthorized', 
-        message: 'Invalid session token' 
+        message: 'Invalid token payload' 
       });
     }
 
     // Get user data
-    const user = await clerkClient.users.getUser(session.userId);
-    
-    // Get organization memberships
-    const orgMemberships = await clerkClient.users.getOrganizationMembershipList({
-      userId: session.userId
-    });
+    const { rows: [user] } = await query(
+      'SELECT id, email, name FROM users WHERE id = $1',
+      [decoded.userId]
+    );
 
-    // Use the active organization or the first one
-    let organizationId = null;
-    let organizationRole = null;
+    if (!user) {
+      return res.status(401).json({ 
+        error: 'Unauthorized', 
+        message: 'User not found' 
+      });
+    }
 
-    if (orgMemberships.data && orgMemberships.data.length > 0) {
-      // Prefer the organization from the request header if provided
-      const requestedOrgId = req.headers['x-organization-id'];
-      
-      if (requestedOrgId) {
-        const membership = orgMemberships.data.find(
-          m => m.organization.id === requestedOrgId
-        );
-        if (membership) {
-          organizationId = membership.organization.id;
-          organizationRole = membership.role;
-        }
+    // Handle organization from header or token
+    let organizationId = req.headers['x-organization-id'] || decoded.organizationId;
+    let organizationRole = decoded.organizationRole;
+
+    // If organization ID provided in header, verify user has access
+    if (req.headers['x-organization-id']) {
+      const { rows: [membership] } = await query(
+        'SELECT role FROM organization_members WHERE organization_id = $1 AND user_id = $2',
+        [req.headers['x-organization-id'], user.id]
+      );
+
+      if (!membership) {
+        return res.status(403).json({ 
+          error: 'Forbidden', 
+          message: 'User not member of organization' 
+        });
       }
-      
-      // Otherwise use the first organization
-      if (!organizationId) {
-        organizationId = orgMemberships.data[0].organization.id;
-        organizationRole = orgMemberships.data[0].role;
-      }
+
+      organizationRole = membership.role;
     }
 
     // Attach auth data to request
     req.auth = {
-      userId: session.userId,
-      organizationId,
+      userId: user.id,
+      organizationId: organizationId ? parseInt(organizationId) : null,
       organizationRole,
-      email: user.emailAddresses[0]?.emailAddress,
+      email: user.email,
+      name: user.name,
       user
     };
 
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        error: 'Unauthorized', 
+        message: 'Token expired' 
+      });
+    }
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ 
+        error: 'Unauthorized', 
+        message: 'Invalid token' 
+      });
+    }
     console.error('Auth middleware error:', error);
     return res.status(401).json({ 
       error: 'Unauthorized', 
@@ -125,4 +139,3 @@ module.exports = {
   requireOrganization,
   requireRole
 };
-
