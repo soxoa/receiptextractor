@@ -185,7 +185,7 @@ export default function ContractsPage() {
                                 </span>
                               </div>
                               
-                              {contract.expiration_date && (
+                              {contract.expiration_date && daysUntilExpiry !== null && (
                                 <div className="flex items-center gap-1.5">
                                   <Clock className="h-3.5 w-3.5 text-gray-400" />
                                   <span>
