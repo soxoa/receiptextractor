@@ -3,8 +3,8 @@ const { query } = require('../db/connection');
 // Plan limits
 const PLAN_LIMITS = {
   free: 10,
-  starter: 100,
-  pro: 500,
+  starter: 50,
+  pro: 300,
   enterprise: 999999 // Effectively unlimited
 };
 

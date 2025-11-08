@@ -46,8 +46,8 @@ Automatically catch vendor overcharges by comparing invoices against negotiated 
 | Plan | Price | Invoices/Month | Features |
 |------|-------|----------------|----------|
 | Free | $0 | 10 | All features unlocked |
-| Starter | $99 | 100 | Email alerts, Priority support |
-| Pro | $299 | 500 | Multi-user, API access, Advanced analytics |
+| Starter | $49 | 50 | Email alerts, Priority support, Analytics |
+| Pro | $149 | 300 | Multi-user, API access, Priority processing |
 | Enterprise | Custom | Unlimited | Dedicated support, Custom integrations |
 
 ## 🔧 Setup Instructions

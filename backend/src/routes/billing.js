@@ -11,15 +11,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PLAN_CONFIG = {
   starter: {
     priceId: process.env.STRIPE_STARTER_PRICE_ID || 'price_starter',
-    amount: 9900, // $99.00 in cents
+    amount: 4900, // $49.00 in cents
     name: 'Starter',
-    limit: 100
+    limit: 50
   },
   pro: {
     priceId: process.env.STRIPE_PRO_PRICE_ID || 'price_pro',
-    amount: 29900, // $299.00 in cents
+    amount: 14900, // $149.00 in cents
     name: 'Pro',
-    limit: 500
+    limit: 300
   }
 };
 

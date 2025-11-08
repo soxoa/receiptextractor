@@ -79,8 +79,8 @@ export default function SettingsPage() {
 
   const plans = [
     { tier: 'free', name: 'Free', price: 0, limit: 10, current: subscription?.planTier === 'free' },
-    { tier: 'starter', name: 'Starter', price: 99, limit: 100, current: subscription?.planTier === 'starter' },
-    { tier: 'pro', name: 'Pro', price: 299, limit: 500, current: subscription?.planTier === 'pro' },
+    { tier: 'starter', name: 'Starter', price: 49, limit: 50, current: subscription?.planTier === 'starter' },
+    { tier: 'pro', name: 'Pro', price: 149, limit: 300, current: subscription?.planTier === 'pro' },
   ];
 
   return (

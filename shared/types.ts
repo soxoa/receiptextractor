@@ -224,15 +224,15 @@ export interface UploadResponse {
 // Plan configuration
 export const PLAN_LIMITS = {
   free: 10,
-  starter: 100,
-  pro: 500,
+  starter: 50,
+  pro: 300,
   enterprise: 999999
 };
 
 export const PLAN_PRICES = {
   free: 0,
-  starter: 99,
-  pro: 299,
+  starter: 49,
+  pro: 149,
   enterprise: 0 // Custom
 };
 
