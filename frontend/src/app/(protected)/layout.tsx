@@ -42,7 +42,7 @@ export default function ProtectedLayout({
       <div className="w-64 bg-white border-r flex flex-col">
         <div className="p-6 border-b">
           <Link href="/dashboard">
-            <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
               ReceiptExtractor
             </span>
           </Link>
@@ -57,7 +57,7 @@ export default function ProtectedLayout({
                 href={item.href}
                 className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-purple-50 text-purple-700"
+                    ? "bg-red-50 text-red-700"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -75,7 +75,7 @@ export default function ProtectedLayout({
                 href="/admin"
                 className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   pathname?.startsWith('/admin')
-                    ? "bg-purple-50 text-purple-700"
+                    ? "bg-red-50 text-red-700"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -88,8 +88,8 @@ export default function ProtectedLayout({
 
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-              <User className="h-4 w-4 text-purple-600" />
+            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+              <User className="h-4 w-4 text-red-600" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-700 truncate">

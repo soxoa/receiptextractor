@@ -44,7 +44,7 @@ export default function SignInPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
-            <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
               ReceiptExtractor
             </span>
           </div>
@@ -72,7 +72,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
               />
             </div>
 
@@ -87,7 +87,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
               />
             </div>
 
@@ -101,7 +101,7 @@ export default function SignInPage() {
 
             <div className="text-center text-sm text-gray-500">
               Don't have an account?{" "}
-              <Link href="/sign-up" className="text-purple-600 hover:underline font-medium">
+              <Link href="/sign-up" className="text-red-600 hover:underline font-medium">
                 Sign up
               </Link>
             </div>
