@@ -14,7 +14,7 @@ export default function AdminOrganizationsPage() {
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect() {
+  useEffect(() => {
     if (session?.accessToken) {
       loadOrganizations();
     }
