@@ -1,16 +1,12 @@
+"use client";
+
 import { Metadata } from "next";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
-import { generateSEOMetadata } from "@/components/SEOHead";
-
-export const metadata: Metadata = generateSEOMetadata({
-  title: "Pricing - Invoice Verification Plans Starting at $49/month",
-  description: "ReceiptExtractor pricing: Free plan with 10 invoices/month, Starter at $49 for 50 invoices, Pro at $149 for 300 invoices. All plans include AI extraction, discrepancy detection, and email alerts. No contracts. Cancel anytime.",
-  keywords: ["invoice verification pricing", "vendor audit software cost", "invoice checking plans", "procurement software pricing"],
-  canonical: "https://frontend-one-tau-98.vercel.app/pricing",
-});
+import { CheckCircle, Zap, TrendingUp, Crown } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
 
 export default function PricingPage() {
   const plans = [
@@ -29,6 +25,9 @@ export default function PricingPage() {
       cta: "Get Started",
       href: "/sign-up",
       popular: false,
+      icon: Zap,
+      color: "from-stone-100 to-stone-200",
+      textColor: "text-stone-700"
     },
     {
       name: "Starter",
@@ -46,6 +45,9 @@ export default function PricingPage() {
       cta: "Start Free Trial",
       href: "/sign-up",
       popular: true,
+      icon: TrendingUp,
+      color: "from-blue-50 to-indigo-100",
+      textColor: "text-blue-700"
     },
     {
       name: "Pro",
@@ -64,6 +66,9 @@ export default function PricingPage() {
       cta: "Start Free Trial",
       href: "/sign-up",
       popular: false,
+      icon: Crown,
+      color: "from-purple-50 to-purple-100",
+      textColor: "text-purple-700"
     },
     {
       name: "Enterprise",
@@ -81,140 +86,217 @@ export default function PricingPage() {
       cta: "Contact Sales",
       href: "mailto:sales@receiptextractor.com",
       popular: false,
+      icon: Crown,
+      color: "from-amber-50 to-orange-100",
+      textColor: "text-amber-700"
     },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b">
-        <Link className="flex items-center justify-center" href="/">
-          <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            ReceiptExtractor
-          </span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/pricing">
-            Pricing
-          </Link>
-          <Link href="/sign-in">
-            <Button variant="outline" size="sm">Sign In</Button>
-          </Link>
-          <Link href="/sign-up">
-            <Button size="sm">Get Started</Button>
-          </Link>
-        </nav>
-      </header>
-
-      <main className="flex-1 py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div className="flex flex-col items-center space-y-4 text-center mb-12">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+    <PublicLayout>
+      {/* Hero */}
+      <section className="w-full py-20 md:py-32 bg-gradient-to-b from-white to-stone-50">
+        <div className="container px-6 mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-6"
+          >
+            <div className="inline-block px-4 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-semibold">
               Simple, Transparent Pricing
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight">
+              Choose Your
+              <br />
+              <span className="bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
+                Savings Plan
+              </span>
             </h1>
-            <p className="max-w-[700px] text-gray-500 md:text-xl">
-              Choose the plan that fits your business. Start free, upgrade anytime.
+            
+            <p className="text-xl text-stone-600 max-w-2xl mx-auto">
+              Start free, upgrade when you see results. No contracts. Cancel anytime.
             </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Cards */}
+      <section className="w-full py-12 pb-20 bg-stone-50">
+        <div className="container px-6 mx-auto max-w-7xl">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {plans.map((plan, idx) => {
+              const Icon = plan.icon;
+              return (
+                <motion.div
+                  key={plan.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card 
+                    className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full ${
+                      plan.popular ? "border-2 border-red-500 shadow-lg" : "border-2 border-stone-200"
+                    }`}
+                  >
+                    {plan.popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-1 rounded-full text-sm font-bold shadow-lg">
+                        Most Popular
+                      </div>
+                    )}
+                    
+                    <CardHeader className="pb-8">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center mb-4`}>
+                        <Icon className={`h-7 w-7 ${plan.textColor}`} />
+                      </div>
+                      <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+                      <CardDescription className="text-stone-600">{plan.description}</CardDescription>
+                      <div className="mt-6">
+                        <span className="text-5xl font-black">{plan.price}</span>
+                        {plan.period && <span className="text-stone-500 text-lg">{plan.period}</span>}
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="pb-8">
+                      <ul className="space-y-3">
+                        {plan.features.map((feature) => (
+                          <li key={feature} className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-green-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <span className="text-sm text-stone-700">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    
+                    <CardFooter>
+                      <Link href={plan.href} className="w-full">
+                        <Button 
+                          className={`w-full h-12 font-semibold transition-all duration-200 ${
+                            plan.popular 
+                              ? "bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-xl hover:scale-105" 
+                              : "bg-stone-100 hover:bg-stone-200 text-stone-900"
+                          }`}
+                        >
+                          {plan.cta}
+                        </Button>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-12">
-            {plans.map((plan) => (
-              <Card 
-                key={plan.name} 
-                className={plan.popular ? "border-purple-600 border-2 relative" : ""}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.period && <span className="text-gray-500">{plan.period}</span>}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Link href={plan.href} className="w-full">
-                    <Button 
-                      className="w-full" 
-                      variant={plan.popular ? "default" : "outline"}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          {/* Value Proposition */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-20 text-center max-w-4xl mx-auto"
+          >
+            <h2 className="text-4xl font-black mb-6">Every Plan Includes</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { title: "95% Accuracy", description: "AI catches overcharges you'd miss manually" },
+                { title: "10s Processing", description: "Results in seconds, not hours of work" },
+                { title: "$18k Avg Savings", description: "Customers save this much per year" }
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card className="p-6 border-2 border-stone-200 hover:border-green-300 transition-colors">
+                    <div className="text-3xl font-black text-stone-900 mb-2">{item.title}</div>
+                    <p className="text-sm text-stone-600">{item.description}</p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
           {/* FAQ Section */}
-          <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+          <div className="mt-20 max-w-3xl mx-auto space-y-8">
+            <h2 className="text-4xl font-black text-center mb-12">Pricing FAQs</h2>
             
-            <div>
-              <h3 className="font-semibold text-lg mb-2">What counts as an invoice?</h3>
-              <p className="text-gray-500">
-                Each uploaded invoice document counts as one invoice, regardless of how many line items it contains.
-              </p>
-            </div>
+            {[
+              {
+                q: "What counts as an invoice?",
+                a: "Each uploaded invoice document counts as one invoice, regardless of how many line items it contains."
+              },
+              {
+                q: "Can I upgrade or downgrade my plan?",
+                a: "Yes! You can upgrade or downgrade your plan at any time from your settings. Changes take effect immediately."
+              },
+              {
+                q: "What happens if I exceed my monthly limit?",
+                a: "You'll be prompted to upgrade your plan. We'll never process invoices beyond your limit without your permission."
+              },
+              {
+                q: "Is there a free trial?",
+                a: "The Free plan includes 10 invoices per month with all features unlocked. No credit card required to start."
+              }
+            ].map((faq, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <Card className="p-6 border-2 border-stone-200 hover:border-red-200 transition-colors">
+                  <h3 className="font-bold text-lg mb-2 text-stone-900">{faq.q}</h3>
+                  <p className="text-stone-600">{faq.a}</p>
+                </Card>
+              </motion.div>
+            ))}
 
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Can I upgrade or downgrade my plan?</h3>
-              <p className="text-gray-500">
-                Yes! You can upgrade or downgrade your plan at any time from your settings. Changes take effect immediately.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-lg mb-2">What happens if I exceed my monthly limit?</h3>
-              <p className="text-gray-500">
-                You'll be prompted to upgrade your plan. We'll never process invoices beyond your limit without your permission.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Is there a free trial?</h3>
-              <p className="text-gray-500">
-                The Free plan includes 10 invoices per month with all features unlocked. No credit card required to start.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-lg mb-2">What file formats do you support?</h3>
-              <p className="text-gray-500">
-                We support PDF, PNG, JPG, and Excel files. Our AI can extract data from scanned documents, photos, and digital files.
-              </p>
+            <div className="text-center mt-8">
+              <Link href="/faq" className="text-red-600 hover:underline font-medium">
+                View All FAQs →
+              </Link>
             </div>
           </div>
         </div>
-      </main>
+      </section>
 
-      {/* Footer */}
-      <footer className="w-full py-6 px-4 md:px-6 border-t">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500">© 2025 ReceiptExtractor. All rights reserved.</p>
-          <nav className="flex gap-4 sm:gap-6 mt-4 md:mt-0">
-            <Link className="text-sm text-gray-500 hover:underline" href="/terms">Terms</Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="/privacy">Privacy</Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="/about">About</Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="/blog">Blog</Link>
-          </nav>
+      {/* CTA Section */}
+      <section className="w-full py-24 bg-gradient-to-br from-red-600 via-red-600 to-orange-600 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '50px 50px'
+          }}></div>
         </div>
-      </footer>
-    </div>
+
+        <div className="container px-6 mx-auto max-w-4xl relative z-10 text-center text-white">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-5xl md:text-6xl font-black mb-6">
+              Start Saving Money Today
+            </h2>
+            <p className="text-xl text-red-100 mb-10 max-w-2xl mx-auto">
+              Join hundreds of companies recovering thousands in overcharges every month.
+            </p>
+            <Link href="/sign-up">
+              <Button 
+                size="lg" 
+                className="h-16 px-12 text-xl bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:scale-105 transition-all duration-200 font-bold"
+              >
+                Get Started Free
+              </Button>
+            </Link>
+            <p className="text-red-100 mt-6 text-sm">
+              Free plan • 10 invoices/month • No credit card • 2-minute setup
+            </p>
+          </motion.div>
+        </div>
+      </section>
+    </PublicLayout>
   );
 }
-
