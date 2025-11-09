@@ -30,6 +30,7 @@ const vendorRoutes = require('./routes/vendors');
 const contractRoutes = require('./routes/contracts');
 const billingRoutes = require('./routes/billing');
 const webhookRoutes = require('./routes/webhooks');
+const adminRoutes = require('./routes/admin');
 
 // Health check (no auth required)
 app.get('/health', (req, res) => {
@@ -44,6 +45,7 @@ app.use('/api/vendors', vendorRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

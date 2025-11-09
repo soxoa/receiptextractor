@@ -34,7 +34,7 @@ async function requireAuth(req, res, next) {
 
     // Get user data
     const { rows: [user] } = await query(
-      'SELECT id, email, name FROM users WHERE id = $1',
+      'SELECT id, email, name, is_admin FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -73,6 +73,7 @@ async function requireAuth(req, res, next) {
       organizationRole,
       email: user.email,
       name: user.name,
+      isAdmin: user.is_admin || false,
       user
     };
 

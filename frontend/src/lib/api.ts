@@ -174,3 +174,38 @@ export const billingAPI = {
       organizationId,
     }),
 };
+
+// Admin endpoints
+export const adminAPI = {
+  getDashboard: (token: string) =>
+    fetchAPI('/api/admin/dashboard', { token }),
+
+  getUsers: (token: string, params?: { limit?: number; offset?: number }) => {
+    const queryString = params ? `?${new URLSearchParams(params as any).toString()}` : '';
+    return fetchAPI(`/api/admin/users${queryString}`, { token });
+  },
+
+  getUser: (id: number, token: string) =>
+    fetchAPI(`/api/admin/users/${id}`, { token }),
+
+  updateUser: (id: number, data: any, token: string) =>
+    fetchAPI(`/api/admin/users/${id}`, {
+      method: 'PATCH',
+      token,
+      body: JSON.stringify(data),
+    }),
+
+  getOrganizations: (token: string) =>
+    fetchAPI('/api/admin/organizations', { token }),
+
+  getActivity: (token: string, limit?: number) => {
+    const queryString = limit ? `?limit=${limit}` : '';
+    return fetchAPI(`/api/admin/activity${queryString}`, { token });
+  },
+
+  getRevenue: (token: string) =>
+    fetchAPI('/api/admin/revenue', { token }),
+
+  getHealth: (token: string) =>
+    fetchAPI('/api/admin/health', { token }),
+};

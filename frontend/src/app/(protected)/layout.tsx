@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Upload, FileText, Users, Settings, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Upload, FileText, Users, Settings, LogOut, User, Shield } from "lucide-react";
 
 export default function ProtectedLayout({
   children,
@@ -66,6 +66,24 @@ export default function ProtectedLayout({
               </Link>
             );
           })}
+
+          {/* Admin Link - Only show if user has admin access */}
+          {session?.user?.email && (
+            <>
+              <div className="my-2 border-t"></div>
+              <Link
+                href="/admin"
+                className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  pathname?.startsWith('/admin')
+                    ? "bg-purple-50 text-purple-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <Shield className="h-5 w-5 mr-3" />
+                Admin Panel
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="p-4 border-t">
