@@ -61,7 +61,7 @@ export default function HowItWorksPage() {
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center border-b">
         <Link className="flex items-center justify-center" href="/">
-          <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
             ReceiptExtractor
           </span>
         </Link>
@@ -94,7 +94,7 @@ export default function HowItWorksPage() {
                 return (
                   <div key={step.number} className="flex flex-col md:flex-row gap-8 items-start">
                     <div className="flex-shrink-0">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white text-3xl font-bold">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center text-white text-3xl font-bold">
                         {step.number}
                       </div>
                     </div>

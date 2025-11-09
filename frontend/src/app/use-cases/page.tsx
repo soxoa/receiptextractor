@@ -99,7 +99,7 @@ export default function UseCasesPage() {
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center border-b">
         <Link className="flex items-center justify-center" href="/">
-          <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
             ReceiptExtractor
           </span>
         </Link>
@@ -185,7 +185,7 @@ export default function UseCasesPage() {
         </section>
 
         {/* CTA */}
-        <section className="w-full py-12 md:py-24 bg-gradient-to-r from-purple-600 to-pink-600">
+        <section className="w-full py-12 md:py-24 bg-gradient-to-r from-red-600 to-red-500">
           <div className="container px-4 md:px-6 mx-auto text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Your Industry. Your Savings.</h2>
             <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">

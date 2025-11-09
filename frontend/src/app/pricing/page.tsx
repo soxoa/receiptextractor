@@ -135,12 +135,12 @@ export default function PricingPage() {
                   transition={{ delay: idx * 0.1 }}
                 >
                   <Card 
-                    className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full ${
-                      plan.popular ? "border-2 border-red-500 shadow-lg" : "border-2 border-stone-200"
+                    className={`relative hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full ${
+                      plan.popular ? "border-2 border-red-500 shadow-lg mt-8" : "border-2 border-stone-200"
                     }`}
                   >
                     {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-1 rounded-full text-sm font-bold shadow-lg">
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-1.5 rounded-full text-sm font-bold shadow-lg z-10">
                         Most Popular
                       </div>
                     )}
