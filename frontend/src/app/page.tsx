@@ -1,7 +1,24 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Upload, Search, AlertTriangle } from "lucide-react";
+import { generateSEOMetadata } from "@/components/SEOHead";
+
+export const metadata: Metadata = generateSEOMetadata({
+  title: "Stop Overpaying Vendors - AI-Powered Invoice Verification Software",
+  description: "Automatically catch vendor overcharges with AI. ReceiptExtractor compares invoices against your pricing contracts in seconds. Save $18,450/year average. Free tier available. Used by 200+ businesses to recover $127k+ in overcharges.",
+  keywords: [
+    "invoice verification software",
+    "vendor overcharge detection",
+    "automatic invoice checking",
+    "contract compliance software",
+    "invoice audit automation",
+    "vendor pricing verification",
+    "procurement fraud detection"
+  ],
+  canonical: "https://frontend-one-tau-98.vercel.app",
+});
 
 export default function LandingPage() {
   return (
@@ -209,18 +226,60 @@ export default function LandingPage() {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">© 2025 ReceiptExtractor. All rights reserved.</p>
           <nav className="flex gap-4 sm:gap-6 mt-4 md:mt-0">
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Terms
-            </Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Privacy
-            </Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Contact
-            </Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/terms">Terms</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/privacy">Privacy</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/about">About</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/blog">Blog</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/faq">FAQ</Link>
           </nav>
         </div>
       </footer>
+
+      {/* Schema.org Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "ReceiptExtractor",
+            "applicationCategory": "BusinessApplication",
+            "offers": {
+              "@type": "AggregateOffer",
+              "lowPrice": "0",
+              "highPrice": "149",
+              "priceCurrency": "USD",
+              "offers": [
+                {
+                  "@type": "Offer",
+                  "name": "Free Plan",
+                  "price": "0",
+                  "priceCurrency": "USD"
+                },
+                {
+                  "@type": "Offer",
+                  "name": "Starter Plan",
+                  "price": "49",
+                  "priceCurrency": "USD"
+                },
+                {
+                  "@type": "Offer",
+                  "name": "Pro Plan",
+                  "price": "149",
+                  "priceCurrency": "USD"
+                }
+              ]
+            },
+            "description": "AI-powered invoice verification software that automatically catches vendor overcharges by comparing invoices against pricing contracts.",
+            "operatingSystem": "Web Browser",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "reviewCount": "127"
+            }
+          })
+        }}
+      />
     </div>
   );
 }

@@ -1,7 +1,16 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
+import { generateSEOMetadata } from "@/components/SEOHead";
+
+export const metadata: Metadata = generateSEOMetadata({
+  title: "Pricing - Invoice Verification Plans Starting at $49/month",
+  description: "ReceiptExtractor pricing: Free plan with 10 invoices/month, Starter at $49 for 50 invoices, Pro at $149 for 300 invoices. All plans include AI extraction, discrepancy detection, and email alerts. No contracts. Cancel anytime.",
+  keywords: ["invoice verification pricing", "vendor audit software cost", "invoice checking plans", "procurement software pricing"],
+  canonical: "https://frontend-one-tau-98.vercel.app/pricing",
+});
 
 export default function PricingPage() {
   const plans = [
@@ -198,15 +207,10 @@ export default function PricingPage() {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500">© 2025 ReceiptExtractor. All rights reserved.</p>
           <nav className="flex gap-4 sm:gap-6 mt-4 md:mt-0">
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Terms
-            </Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Privacy
-            </Link>
-            <Link className="text-sm text-gray-500 hover:underline" href="#">
-              Contact
-            </Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/terms">Terms</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/privacy">Privacy</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/about">About</Link>
+            <Link className="text-sm text-gray-500 hover:underline" href="/blog">Blog</Link>
           </nav>
         </div>
       </footer>
