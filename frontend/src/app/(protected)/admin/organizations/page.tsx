@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { adminAPI } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { ArrowLeft, Building, Users, FileText, Package, DollarSign } from "lucide-react";
+import { ArrowLeft, Building, Users, FileText, Package, DollarSign, Calendar } from "lucide-react";
 
 export default function AdminOrganizationsPage() {
   const { data: session } = useSession();
